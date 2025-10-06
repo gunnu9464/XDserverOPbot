@@ -1,13 +1,26 @@
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+const mineflayer = require('mineflayer');
 
-// Basic route to confirm bot is alive
-app.get('/', (req, res) => {
-  res.send('Bot is running!');
+const bot = mineflayer.createBot({
+  host: 'XDserverOP.aternos.me', // Your server IP
+  port: 48903,                   // Your server port
+  username: 'billi_mausi',       // Bot username
+  version: false                 // Auto-detect version
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Bot is live on port ${port}`);
+// Random movement loop
+function randomMovement() {
+  const actions = ['forward', 'back', 'left', 'right', 'jump', 'sneak'];
+  const action = actions[Math.floor(Math.random() * actions.length)];
+
+  bot.setControlState(action, true);
+
+  setTimeout(() => {
+    bot.setControlState(action, false);
+  }, Math.random() * 1000 + 500); // Random duration between 0.5s–1.5s
+}
+
+// Start movement every few seconds
+bot.once('spawn', () => {
+  console.log('Bot spawned and ready!');
+  setInterval(randomMovement, 3000); // Move every 3 seconds
 });
